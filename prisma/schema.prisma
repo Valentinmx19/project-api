@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+  username String @unique
+  password Int
+  name String
+  firstname String
+  lastname String
+  age Int
+  email String
+  numberphone String
+  student Student?
+  teacher Teacher?
+  admin Admin?
+}
+
+model Student {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  userId String @unique
+  carreer Carreer @relation(fields: [carreerId], references: [id])
+  carreerId Int
+  group Group @relation(fields: [groupId], references: [id])
+  groupId Int
+}
+
+model Teacher {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  userId String @unique
+  department Department @relation(fields: [departmentId], references: [id])
+  departmentId Int
+  group Group?
+}
+
+model Admin {
+  id Int @id @default(autoincrement())
+  department Department?
+  user User @relation(fields: [userId], references: [id])
+  userId String @unique
+}
+
+model Department {
+  id Int @id @default(autoincrement())
+  name String
+  teachers Teacher[]
+  admin Admin @relation(fields: [adminId], references: [id])
+  adminId Int @unique
+  carreers Carreer[]
+}
+
+model Carreer {
+  id Int @id @default(autoincrement())
+  name String
+  department Department @relation(fields: [departmentId], references: [id])
+  departmentId Int
+  students Student[]
+  semesters Semester[]
+}
+
+model Group {
+  id Int @id @default(autoincrement())
+  students Student[]
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+  teacherId Int @unique
+  schedule Schedule?
+}
+
+model Schedule {
+  id Int @id @default(autoincrement())
+  monday String
+  tuesday String
+  wednesday String
+  thursday String
+  friday String
+  saturday String?
+  sunday String?
+  group Group @relation(fields: [groupId], references: [id])
+  groupId Int @unique
+}
+
+model Subject {
+  id Int @id @default(autoincrement())
+  name String
+  semester Semester @relation(fields: [semesterId], references: [id])
+  semesterId Int
+}
+
+model Semester {
+  id Int @id @default(autoincrement())
+  number Int
+  carreer Carreer @relation(fields: [carreerId], references: [id])
+  carreerId Int
+  subjects Subject[]
+}
