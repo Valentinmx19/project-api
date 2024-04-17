@@ -15,15 +15,14 @@ datasource db {
 
 model User {
   id String @id @default(uuid())
-  username String @unique
-  password Int
+  matricula String @unique
+  password String
   name String
   firstname String
   lastname String
-  lastnamemom String
   age Int
   email String
-  numberphone String
+  numberphone Int
   student Student?
   teacher Teacher?
   admin Admin?
@@ -35,8 +34,8 @@ model Student {
   userId String @unique
   carreer Carreer @relation(fields: [carreerId], references: [id])
   carreerId Int
-  group Group @relation(fields: [groupId], references: [id])
-  groupId Int
+  group Group? @relation(fields: [groupId], references: [id])
+  groupId Int?
 }
 
 model Teacher {
@@ -46,6 +45,7 @@ model Teacher {
   department Department @relation(fields: [departmentId], references: [id])
   departmentId Int
   group Group?
+  subjects Subject[]
 }
 
 model Admin {
@@ -59,8 +59,8 @@ model Department {
   id Int @id @default(autoincrement())
   name String
   teachers Teacher[]
-  admin Admin @relation(fields: [adminId], references: [id])
-  adminId Int @unique
+  admin Admin? @relation(fields: [adminId], references: [id])
+  adminId Int? @unique
   carreers Carreer[]
 }
 
@@ -75,6 +75,7 @@ model Carreer {
 
 model Group {
   id Int @id @default(autoincrement())
+  name String
   students Student[]
   teacher Teacher @relation(fields: [teacherId], references: [id])
   teacherId Int @unique
@@ -99,11 +100,12 @@ model Subject {
   name String
   semester Semester @relation(fields: [semesterId], references: [id])
   semesterId Int
+  teachers Teacher[]
 }
 
 model Semester {
   id Int @id @default(autoincrement())
-  number Int
+  name String
   carreer Carreer @relation(fields: [carreerId], references: [id])
   carreerId Int
   subjects Subject[]
